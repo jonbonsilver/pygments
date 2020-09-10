@@ -1,5 +1,5 @@
 {
-    "name": "ramsey/pygments",
+    "name": "jonbonsilver/pygments",
     "description": "A PHP wrapper for Pygments, the Python syntax highlighter, forked from kzykhys/pygments.",
     "keywords": ["pygments", "syntax", "highlight"],
     "license": "MIT",
