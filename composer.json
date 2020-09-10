@@ -14,6 +14,12 @@
             "homepage": "https://benramsey.com"
         }
     ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/jonbonsilver/pygments"
+        }
+    ],
     "require": {
         "php": "^5.5.9 || ^7.0",
         "symfony/process": "^4.0"
