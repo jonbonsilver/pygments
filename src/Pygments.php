@@ -15,7 +15,7 @@ namespace Ramsey\Pygments;
 use Symfony\Component\Process\Process;
 
 /**
- * A PHP wrapper for Pygments, the Python syntax highlighter
+ * A PHP wrapper for Pygments, the Python syntax highlighter.
  */
 class Pygments
 {
