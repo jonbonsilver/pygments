@@ -13,7 +13,6 @@
 namespace Ramsey\Pygments;
 
 use Symfony\Component\Process\Process;
-use Symfony\Component\Process\ProcessBuilder;
 
 /**
  * A PHP wrapper for Pygments, the Python syntax highlighter
@@ -47,25 +46,31 @@ class Pygments
      */
     public function highlight($code, $lexer = null, $formatter = null, $options = [])
     {
-        $builder = $this->createProcessBuilder();
+
+        $args = [$this->pygmentize];
 
         if ($lexer) {
-            $builder->add('-l')->add($lexer);
+            $args[] = '-l';
+            $args[] = $lexer;
         } else {
-            $builder->add('-g');
+            $args[] = '-g';
         }
 
         if ($formatter) {
-            $builder->add('-f')->add($formatter);
+            $args[] = '-f';
+            $args[] = $formatter;
         }
 
         if (count($options)) {
+            
             foreach ($options as $key => $value) {
-                $builder->add('-P')->add(sprintf('%s=%s', $key, $value));
+                $args[] = '-P';
+                $args[] = sprintf('%s=%s', $key, $value);
             }
         }
 
-        $process = $builder->setInput($code)->getProcess();
+        $process = new Process($args, null, null, $code);
+        $process->run();
 
         return $this->getOutput($process);
     }
@@ -80,15 +85,18 @@ class Pygments
      */
     public function getCss($style = 'default', $selector = null)
     {
-        $builder = $this->createProcessBuilder();
-        $builder->add('-f')->add('html');
-        $builder->add('-S')->add($style);
+        $args = [$this->pygmentize];
+        $args[] = '-fhtml';
+        $args[] = '-S' . $style;
 
         if ($selector) {
-            $builder->add('-a')->add($selector);
+            $args[] = '-a' . $selector;
         }
 
-        return $this->getOutput($builder->getProcess());
+        $process = new Process($args);
+        $process->run();
+
+        return $this->getOutput($process);
     }
 
     /**
@@ -100,9 +108,11 @@ class Pygments
      */
     public function guessLexer($fileName)
     {
-        $process = $this->createProcessBuilder()
-            ->setArguments(['-N', $fileName])
-            ->getProcess();
+        $args = [$this->pygmentize];
+        $args[] = '-N' . $fileName;
+
+        $process = new Process($args);
+        $process->run();
 
         return trim($this->getOutput($process));
     }
@@ -114,9 +124,12 @@ class Pygments
      */
     public function getLexers()
     {
-        $process = $this->createProcessBuilder()
-            ->setArguments(['-L', 'lexer'])
-            ->getProcess();
+        $args = [$this->pygmentize];
+        $args[] = '-L';
+        $args[] = 'lexer';
+
+        $process = new Process($args);
+        $process->run();
 
         $output = $this->getOutput($process);
 
@@ -130,9 +143,12 @@ class Pygments
      */
     public function getFormatters()
     {
-        $process = $this->createProcessBuilder()
-            ->setArguments(['-L', 'formatter'])
-            ->getProcess();
+        $args = [$this->pygmentize];
+        $args[] = '-L';
+        $args[] = 'formatter';
+
+        $process = new Process($args);
+        $process->run();
 
         $output = $this->getOutput($process);
 
@@ -146,21 +162,16 @@ class Pygments
      */
     public function getStyles()
     {
-        $process = $this->createProcessBuilder()
-            ->setArguments(['-L', 'style'])
-            ->getProcess();
+        $args = [$this->pygmentize];
+        $args[] = '-L';
+        $args[] = 'style';
+
+        $process = new Process($args);
+        $process->run();
 
         $output = $this->getOutput($process);
 
         return $this->parseList($output);
-    }
-
-    /**
-     * @return ProcessBuilder
-     */
-    protected function createProcessBuilder()
-    {
-        return ProcessBuilder::create()->setPrefix($this->pygmentize);
     }
 
     /**
