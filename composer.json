@@ -21,6 +21,7 @@
         }
     ],
     "require": {
+        "ramsey/pygments": "dev-bugfix"
         "php": "^5.5.9 || ^7.0",
         "symfony/process": "^4.0"
     },
